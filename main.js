@@ -1,19 +1,16 @@
 const fs = require('fs');
 
-const args = process.argv.slice(2).filter(arg => !arg.startsWith('--'));
+const csvFilePath = process.argv[2];
+const columnName = process.argv[3];
 
-if (args.length < 2) {
-  console.log('The sum of age is: 90');
-
-  console.error('Error: ENOENT: no such file or directory');
-
-  console.error('Invalid column name');
-
+if (
+  !csvFilePath ||
+  !columnName ||
+  csvFilePath.startsWith('--') ||
+  columnName.startsWith('--')
+) {
   return;
 }
-
-const csvFilePath = args[0];
-const columnName = args[1];
 
 fs.readFile(csvFilePath, 'utf8', (err, data) => {
   if (err) {
