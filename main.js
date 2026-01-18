@@ -1,7 +1,9 @@
 const fs = require('fs');
 
-const csvFilePath = process.argv[2];
-const columnName = process.argv[3];
+const args = process.argv.slice(2).filter(arg => !arg.startsWith('--'));
+
+const csvFilePath = args[0];
+const columnName = args[1];
 
 if (!csvFilePath || !columnName) {
   process.exit(1);
