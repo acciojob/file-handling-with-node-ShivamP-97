@@ -1,46 +1,40 @@
 const fs = require('fs');
-const csv = require('csv-parser');
 
 const csvFilePath = process.argv[2];
 const columnName = process.argv[3];
-
-let sum = 0;
-let columnKey = null;
-let columnValidated = false;
 
 if (!csvFilePath || !columnName) {
   process.exit(1);
 }
 
-const stream = fs.createReadStream(csvFilePath)
-  .on('error', (err) => {
+fs.readFile(csvFilePath, 'utf8', (err, data) => {
+  if (err) {
     console.error(`Error: ${err.message}`);
-  })
-  .pipe(csv())
-  .on('headers', (headers) => {
-    const found = headers.find(
-      h => h.toLowerCase() === columnName.toLowerCase()
-    );
+    return;
+  }
 
-    if (!found) {
-      console.error('Invalid column name');
-      stream.destroy();
-      return;
-    }
+  const lines = data.trim().split('\n');
+  const headers = lines[0].split(',');
 
-    columnKey = found;
-    columnValidated = true;
-  })
-  .on('data', (data) => {
-    if (!columnValidated) return;
+  const columnIndex = headers.findIndex(
+    h => h.toLowerCase() === columnName.toLowerCase()
+  );
 
-    const value = parseFloat(data[columnKey]);
-    if (!isNaN(value)) {
-      sum += value;
+  if (columnIndex === -1) {
+    console.error('Invalid column name');
+    return;
+  }
+
+  let sum = 0;
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',');
+    const num = parseFloat(values[columnIndex]);
+
+    if (!isNaN(num)) {
+      sum += num;
     }
-  })
-  .on('end', () => {
-    if (columnValidated) {
-      console.log(`The sum of ${columnName} is: ${sum}`);
-    }
-  });
+  }
+
+  console.log(`The sum of ${columnName} is: ${sum}`);
+});
