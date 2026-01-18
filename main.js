@@ -29,8 +29,7 @@ fs.readFile(csvFilePath, 'utf8', (err, data) => {
 
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(',');
-    const num = parseFloat(values[columnIndex]);
-
+    const num = Number(values[columnIndex]);
     if (!isNaN(num)) {
       sum += num;
     }
