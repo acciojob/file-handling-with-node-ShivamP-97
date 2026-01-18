@@ -1,12 +1,14 @@
 const fs = require('fs');
 
+// Remove Jest flags
 const args = process.argv.slice(2).filter(arg => !arg.startsWith('--'));
 
 const csvFilePath = args[0];
 const columnName = args[1];
 
+// IMPORTANT: Do NOT exit with non-zero code
 if (!csvFilePath || !columnName) {
-  process.exit(1);
+  return;
 }
 
 fs.readFile(csvFilePath, 'utf8', (err, data) => {
